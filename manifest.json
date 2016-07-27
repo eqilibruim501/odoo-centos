@@ -1,0 +1,137 @@
+{
+    "jpsType": "install",
+    "application": {
+        "name": "Odoo (Docker)",
+        "id": "odoo-odoo",
+        "homepage": "https://www.odoo.com/",
+        "logo": "http://jps.layershift.com/odooerp/odoo.png",
+        "type": "docker",
+        "version": "9",
+        "description": "Odoo is a suite of open-source enterprise management applications. This installation is a dockerized Odoo 9.0 siute accompanied with PostgreSQL 9.4.5 database and Nginx proxy server.",
+        "settings": {
+            "fields": [{
+                    "type": "string",
+                    "name": "odoo_a_pwd",
+                    "caption": "Admin password",
+                    "default": "",
+                    "required": true
+                }, {
+                    "type": "string",
+                    "name": "odoo_uname",
+                    "caption": "Database username",
+                    "default": "",
+                    "required": true
+                }, {
+                    "type": "string",
+                    "name": "odoo_pwd",
+                    "caption": "Database password",
+                    "default": "",
+                    "required": true
+                }
+            ]
+        },
+        "env": {
+            "topology": {
+                "nodes": [{
+                        "nodeType": "docker",
+                        "count": 1,
+                        "extip": true,
+                        "fixedCloudlets": 1,
+                        "flexibleCloudlets": 16,
+                        "displayName": "Odoo Proxy",
+                        "docker": {
+                            "nodeMission": "bl",
+                            "image": "layershift/odoo-nginx:latest",
+                            "links": ["cp:CP"]
+                        }
+                    }, {
+                        "nodeType": "docker",
+                        "count": 1,
+                        "extip": false,
+                        "fixedCloudlets": 1,
+                        "flexibleCloudlets": 32,
+                        "displayName": "Odoo Server",
+                        "docker": {
+                            "nodeMission": "cp",
+                            "image": "layershift/odoo-centos:latest",
+                            "links": ["sqldb:DB"]
+                        }
+                    }, {
+                        "nodeType": "docker",
+                        "count": 1,
+                        "fixedCloudlets": 1,
+                        "flexibleCloudlets": 32,
+                        "displayName": "Odoo Database",
+                        "docker": {
+                            "nodeMission": "sqldb",
+                            "image": "layershift/postgresql:latest",
+                            "env": {
+                                "POSTGRES_PASSWORD": "${settings.odoo_pwd}",
+                                "POSTGRES_USER": "${settings.odoo_uname}"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "onInstall": {
+            "call": [
+                    "configureOdoo",
+                    "configureNginx",
+                    "restartCP",
+                    "restartBL"
+            ]
+        },
+        "procedures": [{
+                "id": "configureOdoo",
+                "onCall": [{
+                        "executeShellCommands": [{
+                                "nodeMission": "cp",
+                                "user": "root",
+                                "commands": [
+                                        "echo -e \"admin_passwd = ${settings.odoo_a_pwd}\" >> /etc/odoo/openerp-server.conf",
+                                        "echo -e \"db_user = ${settings.odoo_uname} \" >> /etc/odoo/openerp-server.conf",
+                                        "echo -e \"db_password = ${settings.odoo_pwd} \" >> /etc/odoo/openerp-server.conf",
+                                        "echo -e \"db_host = ${nodes.sqldb.address} \" >> /etc/odoo/openerp-server.conf"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }, {
+                "id": "configureNginx",
+                "onCall": [{
+                        "executeShellCommands": [{
+                                "nodeMission": "bl",
+                                "user": "root",
+                                "commands": [
+                                        "sed -i \"s\\ODOOIP\\${nodes.cp.address}\\g\" /etc/nginx/conf.d/default.conf"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }, {
+                "id": "restartCP",
+                "onCall": [{
+                        "restartContainers": {
+                            "nodeMission": "cp"
+                        }
+                    }
+                ]
+            }, {
+                "id": "restartBL",
+                "onCall": [{
+                        "restartContainers": {
+                            "nodeMission": "bl"
+                        }
+                    }
+                ]
+            }
+        ],
+        "success": {
+            "text": "Your Odoo environment has been successfully created.<br /><br />Access your Odoo at <u><a href=\"${env.url}\" target=\"_blank\">${env.url}</a></u><br />To add custom domain name for your Odoo installation follow the steps described in our <u><strong><a href='http://docs.jelastic.com/custom-domains' target='_blank'>documentation</a></strong></u><br /><br /><a href='https://www.odoo.com/documentation/9.0/' target='_blank'>Odoo documentation</a>.",
+            "email": "Your Odoo environment has been successfully created.<br /><br />Access your Odoo at <a href=\"${env.url}\" target=\"_blank\">${env.url}</a><br /><table style='font-size:13px; border: none;'><tr><td>Odoo admin password:</td><td style='padding-left: 10px;'>${settings.odoo_a_pwd}</td></tr><tr><td>Database user:</td><td style='padding-left: 10px;'>${settings.odoo_uname}</td></tr><tr><td>Database password:</td><td style='padding-left: 10px;'>${settings.odoo_pwd}</td></tr></table><br /><u><a href='https://www.odoo.com/documentation/9.0/' target='_blank'>Odoo documentation</a></u>."
+        }
+    }
+}
