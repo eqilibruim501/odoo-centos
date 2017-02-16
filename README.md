@@ -31,3 +31,6 @@ RUN wget -q --no-check-certificate -O /tmp/odoo.rpm https://nightly.odoo.com/${O
 
 Log into your Layershift Jelastic [Dashboard Panel](https://app.j.layershift.co.uk) and search for *Odoo* in Marketplace.
 
+# LICENSE
+
+Licensed under GNU LGPLv3
