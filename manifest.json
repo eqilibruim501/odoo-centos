@@ -10,26 +10,32 @@
 		"description": "Odoo is a suite of open-source enterprise management applications. This installation is a dockerized Odoo 9.0 siute accompanied with PostgreSQL 9.4.5 database and Nginx proxy server.",
 		"settings": {
 			"fields": [{
-					"type": "string",
-					"name": "odoo_a_pwd",
-					"caption": "Admin password",
-					"default": "",
-					"required": true
-				}, {
-					"type": "string",
-					"name": "odoo_uname",
-					"caption": "Database username",
-					"default": "",
-					"required": true
-				}, {
-					"type": "string",
-					"name": "odoo_pwd",
-					"caption": "Database password",
-					"default": "",
-					"required": true
-				}
-			]
-		},
+				"type": "string",
+				"name": "odoo_a_pwd",
+				"caption": "Admin password",
+				"vtype": "alphanum",
+				"vtypeText": "Alphanumeric input only.",            
+                    		"default": "",
+                    		"required": true
+                }, {
+                    		"type": "string",
+                    		"name": "odoo_uname",
+                    		"caption": "Database username",
+				"vtype": "alphanum",
+				"vtypeText": "Alphanumeric input only.",
+                    		"default": "",
+                    		"required": true
+                }, {
+                   		"type": "string",
+                    		"name": "odoo_pwd",
+                    		"caption": "Database password",
+				"vtype": "alphanum",
+				"vtypeText": "Alphanumeric input only.",
+                    		"default": "",
+                    		"required": true
+                }
+            ]
+        },
 		"env": {
 			"topology": {
 				"nodes": [{
