@@ -2,8 +2,8 @@ FROM bbania/centos:base
 MAINTAINER "Layershift" <jelastic@layershift.com>
 
 ENV OPENERP_SERVER /etc/odoo/openerp-server.conf
-ENV ODOO_VERSION 9.0
-ENV ODOO_RELEASE 20160214
+ENV ODOO_VERSION 12.0
+ENV ODOO_RELEASE 20190701
 
 RUN yum install -y python-pip xorg-x11-fonts-75dpi xorg-x11-fonts-Type1 nodejs npm git libpng libX11 libXext libXrender
 RUN wget -O /tmp/wkhtmltox.rpm http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-centos7-amd64.rpm && \
