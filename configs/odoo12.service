@@ -1,0 +1,16 @@
+[Unit]
+Description=Odoo12
+Requires=postgresql-9.6.service
+After=network.target postgresql-9.6.service
+
+[Service]
+Type=simple
+SyslogIdentifier=odoo12
+PermissionsStartOnly=true
+User=odoo
+Group=odoo
+ExecStart=/usr/bin/scl enable rh-python35 -- /opt/odoo/odoo12-venv/bin/python3 /opt/odoo/odoo12/odoo-bin -c /etc/odoo.conf
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target
